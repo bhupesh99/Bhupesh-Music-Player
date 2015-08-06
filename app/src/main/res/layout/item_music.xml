@@ -26,4 +26,6 @@
         tool:text="Android Song Artist"
         android:layout_gravity="center"/>
 
+
+
 </LinearLayout>

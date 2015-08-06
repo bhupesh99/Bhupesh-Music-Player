@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -28,19 +27,19 @@ public class SecondFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate") ;
         super.onCreate(savedInstanceState);
+        musicList.add(new Music("song", "album1", "artist1"));
+        musicList.add(new Music("duhast", "album1", "artist1"));
+        musicList.add(new Music("carnivalofrust", "album1", "artist1"));
+        musicList.add(new Music("song2", "album1", "artist1"));
+        musicList.add(new Music("song3", "album1", "artist1"));
+        musicList.add(new Music("song4", "album1", "artist1"));
+        musicList.add(new Music("song5", "album1", "artist1"));
+        musicList.add(new Music("song6", "album1", "artist1"));
+        musicList.add(new Music("song7", "album1", "artist1"));
         musicList.add(new Music("song1", "album1", "artist1"));
         musicList.add(new Music("song1", "album1", "artist1"));
         musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
-        musicList.add(new Music("song1", "album1", "artist1"));
+        musicList.add(new Music("song1", "album2", "artist2"));
     }
 
     @Nullable

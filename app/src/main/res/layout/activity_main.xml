@@ -66,9 +66,10 @@
                 android:layout_height="38dp" />
 
             <Button
-                android:id="@+id/activity_main_play_pause"
+                android:id="@+id/activity_main_play"
                 android:layout_width="69dp"
                 android:layout_height="38dp" />
+
 
             <Button
                 android:id="@+id/activity_main_ff"

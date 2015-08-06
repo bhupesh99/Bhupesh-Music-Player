@@ -22,22 +22,27 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
+import hugo.weaving.DebugLog;
+import in.novopay.bhupeshmusicplayer.event.MusicCompletionEvent;
+import in.novopay.bhupeshmusicplayer.event.PausePlayToggleEvent;
+import in.novopay.bhupeshmusicplayer.event.SeekBarEvent;
+import in.novopay.bhupeshmusicplayer.model.Music;
+import in.novopay.bhupeshmusicplayer.services.MusicService;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG="MainActivity" ;
+    private static final String TAG = "MainActivity";
 
-    @Bind(R.id.activity_main_play_pause)
     Button mPlayButton;
     private Button fastForwardButton;
     private Button rewindButton;
     private Button songList;
     private SeekBar mSeekBar;
-    private ImageView albumCover ;
+    private ImageView albumCover;
     TextView nameTextView;
     @Bind(R.id.activity_song_artist)
     TextView artistTextView;
 
-    private MediaPlayer mediaPlayer;
 
     private MusicHandler musicHandler = new MusicHandler();
 
@@ -45,33 +50,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d("MainActivity", "Started Activity");
+        EventBus.getDefault().register(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPlayButton = (Button) findViewById(R.id.activity_main_play_pause) ;
+        mPlayButton = (Button) findViewById(R.id.activity_main_play);
         fastForwardButton = (Button) findViewById(R.id.activity_main_ff);
         rewindButton = (Button) findViewById(R.id.activity_main_rewind);
         mSeekBar = (SeekBar) findViewById(R.id.activity_main_seekbar);
-        albumCover = (ImageView) findViewById(R.id.album_cover) ;
-        mPlayButton.setBackgroundResource(R.drawable.pause_button);
+        albumCover = (ImageView) findViewById(R.id.album_cover);
+        mPlayButton.setBackgroundResource(R.drawable.play_button);
         fastForwardButton.setBackgroundResource(R.drawable.fastforward_button);
         rewindButton.setBackgroundResource(R.drawable.rewind_button);
-        songList = (Button) findViewById(R.id.android_song_list) ;
-        nameTextView = (TextView) findViewById(R.id.activity_song_name) ;
-        artistTextView = (TextView) findViewById(R.id.activity_song_artist) ;
+        songList = (Button) findViewById(R.id.android_song_list);
+        nameTextView = (TextView) findViewById(R.id.activity_song_name);
+        artistTextView = (TextView) findViewById(R.id.activity_song_artist);
 
-        Resources r = getResources() ;
+        Resources r = getResources();
 
 
-        String songName = getIntent().getExtras().getString("songName") ;
-        int drawableId = r.getIdentifier(songName, "raw", "in.novopay.bhupeshmusicplayer") ;
+        String songName = getIntent().getExtras().getString("songName");
+        int drawableId = r.getIdentifier(songName, "raw", "in.novopay.bhupeshmusicplayer");
         Log.d(TAG, songName);
         Log.d(TAG, String.valueOf(Uri.parse(songName)));
-        Log.d(TAG, String.valueOf(drawableId)) ;
+        Log.d(TAG, String.valueOf(drawableId));
         Log.d(TAG, String.valueOf(R.raw.song));
-        mediaPlayer = MediaPlayer.create(this, drawableId);
-        mSeekBar.setMax(mediaPlayer.getDuration());
 
-        albumCover.setImageResource(R.drawable.ny) ;
+        albumCover.setImageResource(R.drawable.ny);
         nameTextView.setText(songName);
         artistTextView.setText(getIntent().getExtras().getString("artistName"));
 
@@ -83,32 +87,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mediaPlayer.start();
-        musicHandler.sendEmptyMessage(MESSAGE_WAKE_UP_AND_SEEK);
+        //musicHandler.sendEmptyMessage(MESSAGE_WAKE_UP_AND_SEEK);
+        musicHandler.sendEmptyMessage(MESSAGE_WAKE_UP_AND_SEEK) ;
 
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Play is Clicked", Toast.LENGTH_SHORT).show();
-                if (mPlayButton != null && mediaPlayer.isPlaying() == true) {
-                    mediaPlayer.pause();
-                    mPlayButton.setBackgroundResource(R.drawable.play_button);
-                }
-                else {
-                    mediaPlayer.start();
-                    mPlayButton.setBackgroundResource(R.drawable.pause_button);
-                }
-                Log.d("MainActivity", "Starting Position/Total Duration is " + mediaPlayer.getCurrentPosition() + "," + mediaPlayer.getDuration());
+                MusicService.startPlaying(MainActivity.this);
+                //mSeekBar.setMax(MusicService.mediaPlayer.getDuration());
             }
         });
-
 
         fastForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Fast Foeward is Clicked", Toast.LENGTH_SHORT).show();
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 30000);
+                MusicService.fastForward(MainActivity.this);
             }
         });
 
@@ -116,14 +111,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Rewind is Clicked", Toast.LENGTH_SHORT).show();
-                mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 15000);
-            }
-        });
-
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                Toast.makeText(MainActivity.this, "Music Completed", Toast.LENGTH_LONG).show();
+                MusicService.rewind(MainActivity.this);
             }
         });
 
@@ -131,23 +119,22 @@ public class MainActivity extends AppCompatActivity {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //mediaPlayer.seekTo((int) (((float)progress/100)*mediaPlayer.getDuration()));
-                if (fromUser)
-                    mediaPlayer.seekTo(progress);
+                //MusicService.mediaPlayer.seekTo((int) (((float) progress / 100) * MusicService.mediaPlayer.getDuration()));
+                if (fromUser) {
+                    //MusicService.mediaPlayer.seekTo(progress);
+                    EventBus.getDefault().post(new SeekBarEvent(progress));
+                }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,37 +146,60 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart") ;
+        Log.d(TAG, "onStart");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause") ;
+        Log.d(TAG, "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume") ;
+        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy") ;
+        Log.d(TAG, "onDestroy");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop") ;
+        Log.d(TAG, "onStop");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.wtf(TAG, "onRestart") ;
+        Log.wtf(TAG, "onRestart");
+    }
+
+    @DebugLog
+    public void onEvent(PausePlayToggleEvent pausePlayToggleEvent) {
+        Log.d(TAG, "PAUSE_PLAY_ON#RF:ENFRN:#ERFNENR" + String.valueOf(MusicService.mediaPlayer.isPlaying()));
+
+        if(MusicService.mediaPlayer.isPlaying() == false) {
+            mPlayButton.setBackgroundResource(R.drawable.pause_button);
+            MusicService.mediaPlayer.start();
+        }
+        else {
+            mPlayButton.setBackgroundResource(R.drawable.play_button);
+            MusicService.mediaPlayer.pause();
+        }
+    }
+
+    public void onEvent(MusicCompletionEvent musicCompletionEvent) {
+        Log.d(TAG, "On Event Completion Event");
+    }
+
+    public void onEvent(SeekBarEvent seekBarEvent) {
+        Log.d(TAG, "SeekBar position changed" + String.valueOf(seekBarEvent.position));
+        mSeekBar.setProgress(seekBarEvent.position);
     }
 
     @Override
@@ -223,8 +233,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == MESSAGE_WAKE_UP_AND_SEEK) {
-                if (mediaPlayer != null && mediaPlayer.isPlaying() == true) {
-                    mSeekBar.setProgress(mediaPlayer.getCurrentPosition());
+                if (MusicService.mediaPlayer != null && MusicService.mediaPlayer.isPlaying() == true) {
+                    mSeekBar.setMax(MusicService.mediaPlayer.getDuration());
+                    mSeekBar.setProgress(MusicService.getPostion()) ;
                     sendEmptyMessageDelayed(MESSAGE_WAKE_UP_AND_SEEK, 200);
                 }
             }
