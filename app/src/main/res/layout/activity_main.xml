@@ -10,8 +10,9 @@
 
     <ImageView
         android:id="@+id/album_cover"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp" />
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"/>
 
 
     <TableLayout
@@ -24,9 +25,7 @@
             <TextView
                 android:id="@+id/activity_song_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="38dp" />
+                android:layout_gravity="center" />
         </TableRow>
 
         <TableRow>
@@ -35,8 +34,7 @@
                 android:id="@+id/activity_song_artist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="20dp" />
+                android:layout_gravity="center" />
         </TableRow>
     </TableLayout>
 

@@ -25,6 +25,8 @@ public class ListOfMusicActivity extends AppCompatActivity{
 
     private final int NUMBER_OF_PAGES = 3;
 
+    android.app.FragmentManager fragmentManager ;
+
     private MusicListFragmentStatePagerAdapter mlfsa = new MusicListFragmentStatePagerAdapter(getSupportFragmentManager());
 
     /*ActionBar actionBar = getActionBar() ;
@@ -62,6 +64,7 @@ public class ListOfMusicActivity extends AppCompatActivity{
         getSupportActionBar().setIcon(R.drawable.play_button) ;
 
         viewPager = (ViewPager) findViewById(R.id.activity_viewpager_viewpager);
+        fragmentManager = getFragmentManager() ;
         viewPager.setAdapter(mlfsa);
 
     }

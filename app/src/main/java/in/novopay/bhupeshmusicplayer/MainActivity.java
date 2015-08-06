@@ -2,7 +2,6 @@ package in.novopay.bhupeshmusicplayer;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.squareup.picasso.Picasso;
+
 import java.lang.reflect.Field;
 
 import butterknife.Bind;
@@ -27,7 +28,6 @@ import hugo.weaving.DebugLog;
 import in.novopay.bhupeshmusicplayer.event.MusicCompletionEvent;
 import in.novopay.bhupeshmusicplayer.event.PausePlayToggleEvent;
 import in.novopay.bhupeshmusicplayer.event.SeekBarEvent;
-import in.novopay.bhupeshmusicplayer.model.Music;
 import in.novopay.bhupeshmusicplayer.services.MusicService;
 
 public class MainActivity extends AppCompatActivity {
@@ -75,9 +75,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, String.valueOf(drawableId));
         Log.d(TAG, String.valueOf(R.raw.song));
 
-        albumCover.setImageResource(R.drawable.ny);
+        //albumCover.setImageResource(getIntent().getExtras().getString("artistName"));
+        Picasso
+        .with(getApplicationContext())
+                .load(getIntent().getExtras().getString("artistName"))
+                .error(R.drawable.ny)
+                .into(albumCover);
         nameTextView.setText(songName);
-        artistTextView.setText(getIntent().getExtras().getString("artistName"));
+        artistTextView.setText(getIntent().getExtras().getString("albumName"));
 
 
         songList.setOnClickListener(new View.OnClickListener() {

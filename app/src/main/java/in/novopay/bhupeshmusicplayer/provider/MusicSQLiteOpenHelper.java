@@ -1,21 +1,24 @@
 package in.novopay.bhupeshmusicplayer.provider;
 
+import android.content.ContentProvider;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import hugo.weaving.DebugLog;
 
 /**
- * Created by bupeshkumar on 8/6/15.
+ * Created by bhupeshkumar on 8/6/15.
  */
 public class MusicSQLiteOpenHelper extends SQLiteOpenHelper {
-    public static int VERSION=1;
-    public static String DATABASE_NAME = "musicdb" ;
+    public static int VERSION = 1;
+    public static String DATABASE_NAME = "musicdb";
 
     public interface Tables {
-        String MUSIC = "music" ;
+        String MUSIC = "music";
     }
 
     public interface TableMusic {
@@ -30,18 +33,21 @@ public class MusicSQLiteOpenHelper extends SQLiteOpenHelper {
 
     final String CREATE_TABLE_MUSIC = "CREATE TABLE " + Tables.MUSIC + "("
             + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + TableMusic.ALBUM + " TEXT NOT NULL, "
-            + TableMusic.SONG + " TEXT NOT NULL, "
-            + TableMusic.ARTIST_IMAGE_URL + " TEXT NOT NULL);" ;
+            + TableMusic.ALBUM + " TEXT NOT NULL UNIQUE, "
+            + TableMusic.SONG + " TEXT NOT NULL UNIQUE, "
+            + TableMusic.ARTIST_IMAGE_URL + " TEXT NOT NULL UNIQUE);";
 
     @Override
     @DebugLog
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE " + Tables.MUSIC + " IF EXISTS;");
         db.execSQL(CREATE_TABLE_MUSIC);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TableMusic.ARTIST_IMAGE_URL, "Du Hast");
+        contentValues.put(TableMusic.ALBUM, "Fuck it!!!");
+        contentValues.put(TableMusic.SONG, "http://lorempixel.com/400/200");
 
-    }
-
-    public void insertMusic(String query) {
+        db.insert(Tables.MUSIC, null, contentValues) ;
 
     }
 

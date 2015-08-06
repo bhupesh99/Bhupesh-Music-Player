@@ -11,12 +11,9 @@ import android.util.Log;
 
 import de.greenrobot.event.EventBus;
 import hugo.weaving.DebugLog;
-import in.novopay.bhupeshmusicplayer.MainActivity;
 import in.novopay.bhupeshmusicplayer.R;
 import in.novopay.bhupeshmusicplayer.event.MusicCompletionEvent;
 import in.novopay.bhupeshmusicplayer.event.PausePlayToggleEvent;
-import in.novopay.bhupeshmusicplayer.event.SeekBarEvent;
-import in.novopay.bhupeshmusicplayer.model.Music;
 
 /**
  * Created by bhupeshkumar on 8/5/15.

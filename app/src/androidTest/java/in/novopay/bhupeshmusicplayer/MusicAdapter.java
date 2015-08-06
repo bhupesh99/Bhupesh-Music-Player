@@ -3,6 +3,7 @@ package in.novopay.bhupeshmusicplayer;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import in.novopay.bhupeshmusicplayer.model.Music;
+import in.novopay.bhupeshmusicplayer.model.Collection1;
 import in.novopay.bhupeshmusicplayer.provider.MusicSQLiteOpenHelper;
 
 /**
@@ -25,21 +26,21 @@ import in.novopay.bhupeshmusicplayer.provider.MusicSQLiteOpenHelper;
  */
 public class MusicAdapter extends BaseAdapter {
 
-    ArrayList<Music> musicList;
+    List<Collection1> musicList;
     WeakReference<Context> contextWeakReference;
     MusicSQLiteOpenHelper musicSQLiteOpenHelper;
-    static SQLiteDatabase sqLiteDatabase;
+    SQLiteDatabase sqLiteDatabase;
     Cursor cursor;
 
-    public MusicAdapter(Context context, ArrayList<Music> musicArrayList, MusicSQLiteOpenHelper musicSQLiteOpenHelper) {
+    /*public MusicAdapter(Context context, ArrayList<Collection1> musicArrayList, MusicSQLiteOpenHelper musicSQLiteOpenHelper) {
         this.musicList = musicArrayList;
         this.contextWeakReference = new WeakReference<Context>(context);
         sqLiteDatabase = musicSQLiteOpenHelper.getReadableDatabase();
         cursor = sqLiteDatabase.query(MusicSQLiteOpenHelper.Tables.MUSIC, null, null, null, null, null, null);
-    }
+    }*/
 
-    public MusicAdapter(Context context, ArrayList<Music> musicArrayList) {
-        this.musicList = musicArrayList;
+    public MusicAdapter(Context context, List<Collection1> musicArrayList) {
+        this.musicList =  musicArrayList;
         this.contextWeakReference = new WeakReference<Context>(context);
     }
 
@@ -49,10 +50,11 @@ public class MusicAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        cursor = sqLiteDatabase.query(MusicSQLiteOpenHelper.Tables.MUSIC, null, null, null, null, null, null);
-        cursor.moveToPosition(position);
-        return null;
+    public Collection1 getItem(int position) {
+        //cursor = sqLiteDatabase.query(MusicSQLiteOpenHelper.Tables.MUSIC, null, null, null, null, null, null);
+        //cursor.moveToPosition(position);
+        Log.d("Collection1", "Collection Call") ;
+        return musicList.get(2);
     }
 
     @Override
@@ -87,17 +89,25 @@ public class MusicAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        getItem(position);
+        Collection1 collection1 = getItem(position);
 
 
-        viewHolder.songAlbumView.setText(cursor.getString(cursor.getColumnIndex(MusicSQLiteOpenHelper.TableMusic.ALBUM)));
+        /*viewHolder.songAlbumView.setText(cursor.getString(cursor.getColumnIndex(MusicSQLiteOpenHelper.TableMusic.ALBUM)));
         Picasso
                 .with(contextWeakReference.get())
                 .load("http://lorempixel.com/400/200")
                 .error(R.drawable.ny)
                 .into(viewHolder.songNameView);
         viewHolder.songArtistView.setText(cursor.getString(cursor.getColumnIndex(MusicSQLiteOpenHelper.TableMusic.ARTIST_IMAGE_URL)));
+*/
 
+        viewHolder.songAlbumView.setText(collection1.getArtistname().getText());
+        Picasso
+                .with(contextWeakReference.get())
+                .load(collection1.getArtistimage().getSrc())
+                .error(R.drawable.ny)
+                .into(viewHolder.songNameView);
+        viewHolder.songArtistView.setText(collection1.getSongname().getText());
         return view;
     }
 }
